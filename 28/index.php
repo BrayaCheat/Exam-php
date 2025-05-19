@@ -1,7 +1,7 @@
 <html lang="en">
 
 <head>
-  <title>File upload</title>
+  <title>28. Upload image</title>
 </head>
 
 <body>
