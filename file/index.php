@@ -9,10 +9,20 @@
   if (isset($_POST['upload'])) {
     $file = $_FILES['file'];
     $dir = './uploads';
+    $maxSize = 3 * 1024 * 1024; // 3MB in bytes
+
+    if($file['size'] > $maxSize){
+      echo "Failed to upload!, file must be below 3MB";
+      return;
+    }
+
     if (!is_dir($dir)) {
       mkdir($dir, 0755, true);
     }
-    move_uploaded_file($file['tmp_name'], $dir . '/' . $file['name']);
+
+    if(move_uploaded_file($file['tmp_name'], $dir . '/' . uniqid() . $file['name'])) {
+      echo "Upload success!";
+    }
   }
   ?>
   <form method="POST" enctype="multipart/form-data">
