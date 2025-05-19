@@ -6,7 +6,7 @@
 
 <body>
   <?php
-  if (isset($_POST['upload'])) {
+  if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $file = $_FILES['file'];
     $dir = './uploads';
     $maxSize = 3 * 1024 * 1024; // 3MB in bytes
@@ -22,6 +22,7 @@
 
     if(move_uploaded_file($file['tmp_name'], $dir . '/' . uniqid() . $file['name'])) {
       echo "Upload success!";
+      header("Location: index.php");
     }
   }
   ?>
