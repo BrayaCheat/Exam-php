@@ -1,15 +1,33 @@
 <?php
-  // fetch
   require('./db.php');
-  $id = htmlspecialchars($_GET['id']);
-  $client = $pdo->prepare("
-    SELECT * FROM users
-    WHERE id = :id
-  ");
-  $client->execute([
-    ":id" => $id
-  ]);
-  $user = $client->fetch();
+
+  // fetch
+  if($_SERVER['REQUEST_METHOD'] === 'GET'){
+    $id = htmlspecialchars($_GET['id']);
+    $client = $pdo->prepare("
+      SELECT * FROM users
+      WHERE id = :id
+    ");
+    $client->execute([
+      ":id" => $id
+    ]);
+    $user = $client->fetch();
+  }
+
+  // update
+  if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $client = $pdo->prepare(
+        "UPDATE users SET username = :username, email = :email WHERE id = :id"
+    );
+    $client->execute([
+        ':id'       => $_GET['id'],
+        ':username' => $_POST['username'],
+        ':email'    => $_POST['email'],
+    ]);
+
+    header('Location: index.php');
+    exit;
+}
 ?>
 
 <form method="POST">
@@ -29,27 +47,3 @@
   />
   <button type="submit" name="update">update</button>
 </form>
-
-<?php
-  // update
-  require('./db.php');
-
-  if(isset($_POST['update'])){
-    $id = htmlspecialchars($_GET['id']);
-    $username = htmlspecialchars($_POST['username']);
-    $email = htmlspecialchars($_POST['email']);
-    $client = $pdo->prepare("
-      UPDATE users
-      SET username = :username,
-      email = :email
-      WHERE id = :id
-    ");
-    $client->execute([
-      ":id" => $id,
-      ":username" => $username,
-      ":email" => $email
-    ]);
-    header("Location: index.php");
-    exit;
-  }
-?>

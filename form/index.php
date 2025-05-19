@@ -1,35 +1,13 @@
 <html lang="en">
-
 <head>
   <title>Form</title>
-  <style>
-    body,
-    * {
-      font-size: 14px;
-    }
-
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      max-width: 300px;
-    }
-
-    table,
-    th,
-    td {
-      border: 1px solid black;
-      border-collapse: collapse;
-      padding: 10px;
-    }
-  </style>
 </head>
 
 <body>
 
   <?php
   require('./db.php');
-  if (isset($_POST['create'])) {
+  if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = htmlspecialchars($_POST['username']);
     $email = htmlspecialchars($_POST['email']);
     $password = password_hash(htmlspecialchars($_POST['password']), PASSWORD_DEFAULT);
@@ -45,6 +23,22 @@
       exit;
     }
   }
+
+  function getGrade($score) {
+    if(!is_numeric($score)){
+      return $score;
+    }
+    switch($score){
+      case $score < 50:
+        return "Failed!";
+      case $score >= 51:
+        return "E+";
+      case $score >= 91:
+        return "A+";
+      default:
+        return "No grade";
+    }
+  }
   ?>
 
   <form method="POST">
@@ -54,7 +48,7 @@
     <button type="submit" name="create">create user</button>
   </form>
 
-  <table>
+  <table border=1 style="border-collapse: collapse;">
     <caption>User Table</caption>
     <thead>
       <tr>
@@ -65,18 +59,21 @@
         <th>Action</th>
       </tr>
     </thead>
+
     <tbody>
       <?php
-      require './db.php';
-      $client = $pdo->prepare("SELECT * FROM users");
-      $client->execute();
-      $users = $client->fetchAll();
+        require './db.php';
 
-      foreach ($users as $item):
-        $id = htmlspecialchars($item['id']);
-        $username = substr(htmlspecialchars($item['username']), 0, 10);
-        $email = htmlspecialchars($item['email']);
-        $password = substr(htmlspecialchars($item['password']), 0, 10);
+        $client = $pdo->prepare("SELECT * FROM users");
+        $client->execute();
+        $users = $client->fetchAll();
+
+        foreach ($users as $item):
+          $id = htmlspecialchars($item['id']);
+          // $username = substr(htmlspecialchars($item['username']), 0, 10);
+          $username = getGrade(htmlspecialchars($item['username']));
+          $email = htmlspecialchars($item['email']);
+          $password = substr(htmlspecialchars($item['password']), 0, 10);
       ?>
 
         <tr>
