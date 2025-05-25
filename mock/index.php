@@ -34,6 +34,13 @@
         move_uploaded_file($tmp, $path . '/' . $files['name'][$i]);
       }
     }
+
+    // write files
+    $f = fopen("file.txt", "w", true); // filename / mode / exclude path
+      for ($i=0; $i<10; $i++) {
+        fwrite($f, "Hello World!\n");
+      }
+      fclose($f);
   ?>
   <form method="post" enctype="multipart/form-data">
     <input type="file" name="file[]" multiple required>
